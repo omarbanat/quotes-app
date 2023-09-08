@@ -1,23 +1,34 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import Quotes from './components/Quotes';
 
 function App() {
+  const [data, setData] = useState({});
+
+  const fetchData = () => {
+    fetch('https://api.quotable.io/quotes')
+      .then((response) => response.json())
+      .then((data) => setData(data));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="quotes">
+      {data &&
+        data.results &&
+        data.results.map((quoteObj) => {
+          return (
+            <Quotes
+              tags={quoteObj.tags}
+              key={quoteObj._id}
+              author={quoteObj.author}
+              content={quoteObj.content}
+            />
+          );
+        })}
     </div>
   );
 }
